@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Settings - Gollery</title>
+	<link rel="stylesheet" href="/main.css">
+	<script src="/main.js"></script>
+</head>
+<body onload="settings()">
+	<header>
+		<a href=".."><i>back</i></a>
+		<div>Settings</div>
+	</header>
+
+	<div class="overview">
+		<div class="wide">
+			<i>image</i>
+			<b id="images"></b>
+		</div>
+		<div>
+			<i>storage</i>
+			<b id="storage"></b>
+		</div>
+		<div>
+			<i>cache</i>
+			<b id="cache"></b>
+		</div>
+		<div>
+			<i>free</i>
+			<b id="free"></b>
+		</div>
+		<div>
+			<i>scan</i>
+			<b id="last-scan"></b>
+		</div>
+	</div>
+
+	<div class="settings">
+		<a onclick="scan()">
+			<i>reload</i>
+			<div>
+				<b>Quick scan</b>
+				<p>Look for new files in filesystem and add them to library</p>
+			</div>
+		</a>
+	</div>
+</body>
+</html>
