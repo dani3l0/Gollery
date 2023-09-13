@@ -199,6 +199,8 @@ func scan(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	os.MkdirAll(filepath.Dir("cache"), 0750)
+	os.MkdirAll(filepath.Dir("images"), 0750)
 	updateLibrary(false)
 	http.HandleFunc("/f/", serveFullImage)
 	http.HandleFunc("/t/", serveThumbnail)
