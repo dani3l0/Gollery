@@ -7,16 +7,75 @@ body {
 	font-family: monospace;
 	user-select: none;
 	font-family: 'Advent Pro';
+	font-size: 16px;
+	margin: 0;
 	-webkit-tap-highlight-color: transparent;
 }
+
+a {
+	text-decoration: none;
+	color: inherit;
+}
+
+p {
+	margin: 0;
+}
+
+
+/* Header */
 
 header {
 	position: sticky;
 	top: 0;
 	z-index: 1000;
 	background: #000B;
+	display: flex;
+	align-items: center;
+	padding: 4px 0;
+	font-size: 32px;
 	backdrop-filter: blur(32px);
 }
+
+header div {
+	flex-grow: 1;
+}
+
+header a {
+	position: relative;
+	width: 72px;
+	height: 40px;
+	cursor: pointer;
+	overflow: hidden;
+	margin: 12px;
+}
+
+header a::before {
+	content: " ";
+	border-radius: 100px;
+	position: absolute;
+	width: 48px;
+	height: 100%;
+	background: #222;
+	left: 50%;
+	transform: translateX(-50%);
+	transition: width .2s, background .2s;
+}
+
+header a:hover::before {
+	width: 100%;
+	background: #333;
+}
+
+header i {
+	position: absolute;
+	top: 50%;
+	font-size: 22px;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+
+/* Logo */
 
 .gollery {
 	font-size: 32px;
@@ -28,6 +87,9 @@ header {
 .gollery::after {
 	content: "llery";
 }
+
+
+/* Gallery main view */
 
 #items {
 	display: flex;
@@ -66,4 +128,98 @@ header {
 
 #items p {
 	white-space: pre;
+}
+
+
+/* Settings */
+.summary {
+	margin: 54px auto;
+	max-width: 640px;
+}
+
+.overview {
+	display: flex;
+	flex-wrap: wrap;
+	flex: 1 1 0;
+}
+
+.overview b {
+	margin-top: 16px;
+	color: #888;
+}
+
+.overview div, .total_count {
+	flex: 1;
+	padding: 0 20px;
+	background: #181818;
+	min-width: 144px;
+	border-radius: 8px;
+	overflow: hidden;
+	margin: 4px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.overview i {
+	margin: 20px 0;
+	font-size: 24px;
+	color: #0F8;
+	text-shadow: 0 0 32px #0F8;
+}
+
+.total_count b {
+	margin-top: 40px;
+	font-size: 44px;
+}
+
+.total_count i {
+	margin: 20px 0;
+	font-size: 80px;
+	color: #F46;
+	text-shadow: 0 0 80px #F46;
+}
+.settings {
+	max-width: 800px;
+	margin: 0 auto;
+}
+
+.settings a {
+	display: flex;
+	align-items: center;
+	margin: 8px;
+	padding: 16px 12px;
+	background: #181818;
+	border: 6px solid #181818;
+	cursor: pointer;
+	border-radius: 10px;
+	overflow: hidden;
+	transition: background .2s;
+}
+
+.settings i {
+	margin-left: 8px;
+	margin-right: 16px;
+}
+
+.settings b {
+	font-size: 18px;
+}
+
+.settings p {
+	margin-top: 2px;
+	font-weight: bold;
+	color: #888;
+}
+
+.settings a:hover {
+	background: #282828;
+}
+
+.settings s {
+	display: block;
+	text-decoration: none;
+	font-weight: bold;
+	color: #666;
+	margin: 48px 20px 8px;
 }

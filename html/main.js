@@ -22,7 +22,7 @@ function settingsMain() {
 				let lastScan = data.LastScan
 				if (lastScan) {
 					let d = new Date(lastScan)
-					const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+					const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 					lastScan = `${d.getDate()} ${months[d.getMonth()]} at ${d.getHours()}:${d.getMinutes()}`
 				}
 				else {
@@ -43,3 +43,5 @@ function scan() {
 	xhr.open("GET", "/settings/scan")
 	xhr.send()
 }
+
+function stopScan() {}

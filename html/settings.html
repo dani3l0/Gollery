@@ -2,46 +2,58 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 	<title>Settings - Gollery</title>
 	<link rel="stylesheet" href="/main.css">
 	<script src="/main.js"></script>
 </head>
 <body onload="settings()">
 	<header>
-		<a href=".."><i>back</i></a>
+		<a href=".."><i>arrow_back</i></a>
 		<div>Settings</div>
 	</header>
 
-	<div class="overview">
-		<div class="wide">
+	<div class="summary">
+		<div class="total_count">
 			<i>image</i>
 			<b id="images"></b>
 		</div>
-		<div>
-			<i>storage</i>
-			<b id="storage"></b>
+		<div class="overview">
+			<div>
+				<i>storage</i>
+				<b id="storage"></b>
+			</div>
+			<div>
+				<i>cached</i>
+				<b id="cache"></b>
+			</div>
 		</div>
-		<div>
-			<i>cache</i>
-			<b id="cache"></b>
-		</div>
-		<div>
-			<i>free</i>
-			<b id="free"></b>
-		</div>
-		<div>
-			<i>scan</i>
-			<b id="last-scan"></b>
+		<div class="overview">
+			<div>
+				<i>hard_drive</i>
+				<b id="free"></b>
+			</div>
+			<div>
+				<i>scan</i>
+				<b id="last-scan"></b>
+			</div>
 		</div>
 	</div>
 
 	<div class="settings">
+		<s>Library</s>
 		<a onclick="scan()">
-			<i>reload</i>
+			<i>refresh</i>
 			<div>
 				<b>Quick scan</b>
-				<p>Look for new files in filesystem and add them to library</p>
+				<p>Generate thumbnails of all your existing images</p>
+			</div>
+		</a>
+		<a onclick="stopScan()">
+			<i>pause</i>
+			<div>
+				<b>Stop scanning</b>
+				<p>Some of your images will still have no previews</p>
 			</div>
 		</a>
 	</div>
