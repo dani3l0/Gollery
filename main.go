@@ -14,6 +14,7 @@ import (
 	"path"
 	"path/filepath"
 	"strings"
+	"syscall"
 	"text/template"
 	"time"
 
@@ -223,6 +224,12 @@ func settingsApi(w http.ResponseWriter, r *http.Request) {
 	if !auth(w, r) {
 		return
 	}
+
+	var stat syscall.Statfs_t
+	syscall.Statfs("images", &stat)
+	free := float32(stat.Bavail*uint64(stat.Bsize)) / 1000.0 / 1000.0 / 1000.0
+	stats.Free = float32(free)
+
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(stats)
 }

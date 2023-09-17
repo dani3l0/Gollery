@@ -16,7 +16,7 @@ function settingsMain() {
 			set("images", data.Images)
 			set("storage", `${data.Size.toFixed(3)} GB`)
 			set("cache", `${data.Cache.toFixed(3)} GB`)
-			set("free", `${data.Images.toFixed(3)} GB`)
+			set("free", `${data.Free.toFixed(3)} GB`)
 
 			if (!data.Scanning) {
 				let lastScan = data.LastScan
