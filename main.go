@@ -2,8 +2,9 @@ package main
 
 import (
 	"bytes"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
-	"fmt"
 	htmlTemplate "html/template"
 	"image"
 	"image/jpeg"
@@ -31,21 +32,46 @@ type Stats struct {
 
 var stats Stats
 
+const secret string = "mysecret2137"
+
+var secretHash string
+
+func auth(w http.ResponseWriter, r *http.Request) bool {
+	token, err := r.Cookie("gollerysecret")
+	if err != nil || token.Value != secretHash {
+		http.Redirect(w, r, "/login.html", http.StatusSeeOther)
+		return false
+	}
+	return true
+}
+
 func serveFullImage(w http.ResponseWriter, r *http.Request) {
+	if !auth(w, r) {
+		return
+	}
 	http.ServeFile(w, r, strings.Replace(r.URL.Path, "/f/", "images/", 1))
 }
 
 func serveThumbnail(w http.ResponseWriter, r *http.Request) {
+	if !auth(w, r) {
+		return
+	}
 	http.ServeFile(w, r, strings.Replace(r.URL.Path, "/t/", "cache/", 1))
 }
 
 func serveSettings(w http.ResponseWriter, r *http.Request) {
+	if !auth(w, r) {
+		return
+	}
 	http.ServeFile(w, r, "html/settings.html")
 }
 
 func listAllFiles(dir string) []string {
 	var files []string
-	realPath, _ := filepath.EvalSymlinks(dir)
+	realPath, err := filepath.EvalSymlinks(dir)
+	if err != nil {
+		return nil
+	}
 	filepath.Walk(realPath, func(path string, info os.FileInfo, _ error) error {
 		if !info.IsDir() {
 			files = append(files, strings.Replace(path, realPath, dir, 1))
@@ -89,6 +115,12 @@ func updateLibrary(fullScan bool) {
 	if stats.Scanning {
 		return
 	}
+	cached := listAllFiles("cache")
+	gallery, err := os.ReadDir("images")
+	if err != nil {
+		return
+	}
+
 	stats = Stats{
 		Images:   0,
 		Size:     0,
@@ -97,8 +129,7 @@ func updateLibrary(fullScan bool) {
 		LastScan: 0,
 		Scanning: true,
 	}
-	cached := listAllFiles("cache")
-	gallery, _ := os.ReadDir("images")
+
 	var stored []string
 	for _, e := range gallery {
 		for _, f := range listAllFiles("images/" + e.Name()) {
@@ -110,8 +141,6 @@ func updateLibrary(fullScan bool) {
 	for e := 0; e < len(cached); e++ {
 		f := strings.Replace(cached[e], "cache", "images", 1)
 		if !slices.Contains(stored, f) && fullScan {
-			fmt.Print("Removing: ")
-			fmt.Println(cached[e])
 			os.Remove(cached[e])
 		} else {
 			stats.Images++
@@ -124,8 +153,6 @@ func updateLibrary(fullScan bool) {
 	for e := 0; e < len(stored); e++ {
 		f := strings.Replace(stored[e], "images", "cache", 1)
 		if !slices.Contains(cached, f) && fullScan {
-			fmt.Print("Generating: ")
-			fmt.Println(stored[e])
 			thumbnail(stored[e])
 			stats.Images++
 			cacheInfo, _ := os.Stat(f)
@@ -155,6 +182,9 @@ type indexItems struct {
 }
 
 func galleryMain(w http.ResponseWriter, r *http.Request) {
+	if !auth(w, r) {
+		return
+	}
 	dir := strings.Replace(r.URL.Path, "/g/", "images/", 1)
 	entries, _ := os.ReadDir(dir)
 	itemT_, _ := os.ReadFile("html/item.html")
@@ -190,18 +220,49 @@ func galleryMain(w http.ResponseWriter, r *http.Request) {
 }
 
 func settingsApi(w http.ResponseWriter, r *http.Request) {
+	if !auth(w, r) {
+		return
+	}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(stats)
 }
 
 func scan(w http.ResponseWriter, r *http.Request) {
+	if !auth(w, r) {
+		return
+	}
 	go updateLibrary(true)
 }
 
+func login(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	sentSecret := r.Form.Get("secret")
+	s_ := sha256.New()
+	s_.Write([]byte(sentSecret))
+	sentHash := hex.EncodeToString(s_.Sum(nil))
+	if sentHash == secretHash {
+		expiration := time.Now().Add(365 * 24 * time.Hour)
+		cookie := http.Cookie{Name: "gollerysecret", Value: sentHash, Expires: expiration, Path: "/"}
+		http.SetCookie(w, &cookie)
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+	} else {
+		w.WriteHeader(http.StatusUnauthorized)
+	}
+}
+
 func main() {
+	// Init library
 	os.MkdirAll(filepath.Dir("cache"), 0750)
 	os.MkdirAll(filepath.Dir("images"), 0750)
 	updateLibrary(false)
+
+	// Init secret token
+	secretHash_ := sha256.New()
+	secretHash_.Write([]byte(secret))
+	secretHash = hex.EncodeToString(secretHash_.Sum(nil))
+
+	// Handle functions
+	http.HandleFunc("/login/", login)
 	http.HandleFunc("/f/", serveFullImage)
 	http.HandleFunc("/t/", serveThumbnail)
 	http.HandleFunc("/g/", galleryMain)
