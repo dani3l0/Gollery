@@ -1,8 +1,12 @@
+@import url(/fonts/advent-pro/advent-pro.css);
+@import url(/fonts/material-symbols/material-symbols.css);
+
 body {
 	background: #000;
 	color: #EEE;
 	font-family: monospace;
 	user-select: none;
+	font-family: 'Advent Pro';
 	-webkit-tap-highlight-color: transparent;
 }
 

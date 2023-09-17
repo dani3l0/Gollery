@@ -1,0 +1,15 @@
+/* advent-pro-regular */
+@font-face {
+	font-family: Advent Pro;
+	font-style: normal;
+	font-weight: 400;
+	src: local("Advent Pro Regular"), local("AdventPro-Regular"), url(advent-pro-regular.woff2) format("woff2");
+}
+/* advent-pro-bold */
+@font-face {
+	font-family: Advent Pro;
+	font-style: normal;
+	font-weight: 700;
+	src: local("Advent Pro Bold"), local("AdventPro-Bold"), url(advent-pro-bold.woff2) format("woff2");
+}
+
