@@ -1,3 +1,27 @@
+document.addEventListener("DOMContentLoaded", function() {
+	// Image Viewer
+	let image = document.getElementById("image")
+	image.addEventListener("load", function() {
+		image.classList.add("loaded")
+	})
+	let viewer = document.getElementById("viewer")
+	viewer.addEventListener("click", function() {
+		viewer.classList.remove("open")
+		image.classList.remove("loaded")
+	})
+
+	// Image list
+	let imageItems = document.getElementById("items").children
+	for (let item of imageItems) {
+		if (item.getAttribute("isFile") == "true") {
+			item.addEventListener("click", function(e) {
+				e.preventDefault()
+				showImage(item)
+			})
+		}
+	}
+})
+
 function set(id, value) {
 	document.getElementById(id).innerText = value
 }
@@ -45,3 +69,8 @@ function scan() {
 }
 
 function stopScan() {}
+
+function showImage(img) {
+	document.getElementById("viewer").classList.add("open")
+	document.getElementById("image").src = img.href
+}

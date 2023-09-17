@@ -187,6 +187,12 @@ func galleryMain(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	dir := strings.Replace(r.URL.Path, "/g/", "images/", 1)
+	fi, _ := os.Stat(path.Clean(dir))
+	if !fi.IsDir() {
+		fullImage := strings.Replace(r.URL.Path, "/g/", "/f/", 1)
+		http.Redirect(w, r, fullImage, http.StatusSeeOther)
+		return
+	}
 	entries, _ := os.ReadDir(dir)
 	itemT_, _ := os.ReadFile("html/item.html")
 	itemT, _ := htmlTemplate.New("galleryItem").Parse(string(itemT_))
