@@ -281,6 +281,13 @@ func login(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func logout(w http.ResponseWriter, r *http.Request) {
+	expiration := time.Now().Add(-1)
+	cookie := http.Cookie{Name: "gollerysecret", Expires: expiration, Path: "/"}
+	http.SetCookie(w, &cookie)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
 func main() {
 	// Init library
 	os.MkdirAll("cache", 0750)
@@ -294,6 +301,7 @@ func main() {
 
 	// Handle functions
 	http.HandleFunc("/login/", login)
+	http.HandleFunc("/logout/", logout)
 	http.HandleFunc("/f/", serveFullImage)
 	http.HandleFunc("/t/", serveThumbnail)
 	http.HandleFunc("/g/", galleryMain)
