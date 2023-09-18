@@ -5,9 +5,12 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"fmt"
 	htmlTemplate "html/template"
 	"image"
+	_ "image/gif"
 	"image/jpeg"
+	_ "image/png"
 	"math/rand"
 	"net/http"
 	"os"
@@ -91,11 +94,16 @@ func randomFileFrom(dir string) string {
 	return ""
 }
 
-func thumbnail(filePath string) {
+func thumbnail(filePath string) bool {
 	inputFile, _ := os.Open(filePath)
 	defer inputFile.Close()
 
-	inputImage, _, _ := image.Decode(inputFile)
+	inputImage, _, err := image.Decode(inputFile)
+	if err != nil {
+		fmt.Println(filePath, err)
+		return false
+	}
+
 	b := inputImage.Bounds()
 	w, h := float32(b.Dx()), float32(b.Dy())
 	divideBy := 1.0 / (440.0 / w)
@@ -110,6 +118,7 @@ func thumbnail(filePath string) {
 	outputFile, _ := os.Create(cache)
 	defer outputFile.Close()
 	jpeg.Encode(outputFile, thumbnail, &jpeg.Options{Quality: 60})
+	return true
 }
 
 func updateLibrary(fullScan bool) {
@@ -154,7 +163,10 @@ func updateLibrary(fullScan bool) {
 	for e := 0; e < len(stored); e++ {
 		f := strings.Replace(stored[e], "images", "cache", 1)
 		if !slices.Contains(cached, f) && fullScan {
-			thumbnail(stored[e])
+			ok := thumbnail(stored[e])
+			if !ok {
+				continue
+			}
 			stats.Images++
 			cacheInfo, _ := os.Stat(f)
 			stats.Cache += float32(cacheInfo.Size()) / 1000.0 / 1000.0 / 1000.0
