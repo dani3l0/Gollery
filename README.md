@@ -6,7 +6,7 @@ Extremely simple self-hosted gallery app written in Go.
 ![Preview](preview.png)
 
 
-### How to run
+## 🏃 How to run
 
 As for now, **build from source is necessary** as I did not provide any config options (thus building single binaries makes no sense).
 
@@ -27,7 +27,7 @@ go build .
 - Default secret is `mysecret2137`
 
 
-### Usage
+## 📘 Usage
 
 Gollery creates two folders on first run:
 
@@ -37,7 +37,7 @@ Gollery creates two folders on first run:
 **Note:** you can safely place symlinks at the root of `images` directory if you don't want to move all your files here
 
 
-### Final words?
+## 🤔 Final words?
 
 Well, that's my first project in `Go`. It is not recommended to use it for production and extremely large image libraries. 
 
