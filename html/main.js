@@ -11,14 +11,21 @@ document.addEventListener("DOMContentLoaded", function() {
 	})
 
 	// Image list
-	let imageItems = document.getElementById("items").children
+	let imageItems = document.getElementById("images").children
+	if (!imageItems.length) {
+		document.getElementById("images").parentNode.style.display = "none"
+	}
 	for (let item of imageItems) {
-		if (item.getAttribute("isFile") == "true") {
-			item.addEventListener("click", function(e) {
-				e.preventDefault()
-				showImage(item)
-			})
-		}
+		item.addEventListener("click", function(e) {
+			e.preventDefault()
+			showImage(item)
+		})
+	}
+
+	// Folder list
+	let folderItems = document.getElementById("folders").children
+	if (!folderItems.length) {
+		document.getElementById("folders").parentNode.style.display = "none"
 	}
 })
 

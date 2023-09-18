@@ -191,7 +191,8 @@ type galleryItem struct {
 }
 
 type indexItems struct {
-	Items string
+	Folders string
+	Images  string
 }
 
 func galleryMain(w http.ResponseWriter, r *http.Request) {
@@ -211,7 +212,8 @@ func galleryMain(w http.ResponseWriter, r *http.Request) {
 	T_, _ := os.ReadFile("html/gallery.html")
 	T, _ := template.New("index").Parse(string(T_))
 
-	var tpl bytes.Buffer
+	var folders_ bytes.Buffer
+	var images_ bytes.Buffer
 
 	for _, e := range entries {
 		name := e.Name()
@@ -230,10 +232,14 @@ func galleryMain(w http.ResponseWriter, r *http.Request) {
 			Items:  0,
 			Size:   20.0,
 		}
-		itemT.Execute(&tpl, item)
+		if isFile {
+			itemT.Execute(&images_, item)
+		} else {
+			itemT.Execute(&folders_, item)
+		}
 	}
 
-	result := indexItems{Items: tpl.String()}
+	result := indexItems{Folders: folders_.String(), Images: images_.String()}
 	T.Execute(w, result)
 
 }

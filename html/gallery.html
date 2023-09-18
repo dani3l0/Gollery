@@ -13,7 +13,23 @@
 		<div class="gollery"></div>
 		<a href="/settings"><i>settings</i></a>
 	</header>
-	<div id="items">{{ .Items }}</div>
+
+	<div class="section">
+		<s>
+			<i>folder</i>
+			<b>Folders</b>
+		</s>
+		<div id="folders" class="items">{{ .Folders }}</div>
+	</div>
+
+	<div class="section">
+		<s>
+			<i>image</i>
+			<b>Images</b>
+		</s>
+		<div id="images" class="items">{{ .Images }}</div>
+	</div>
+
 	<div id="viewer">
 		<img id="image">
 	</div>
