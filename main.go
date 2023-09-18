@@ -265,8 +265,8 @@ func login(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	// Init library
-	os.MkdirAll(filepath.Dir("cache"), 0750)
-	os.MkdirAll(filepath.Dir("images"), 0750)
+	os.MkdirAll("cache", 0750)
+	os.MkdirAll("images", 0750)
 	updateLibrary(false)
 
 	// Init secret token
