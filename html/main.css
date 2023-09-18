@@ -22,6 +22,54 @@ p {
 }
 
 
+/* Login screen */
+.login {
+	position: fixed;
+	top: 40%;
+	left: 50%;
+	max-height: 300px;
+	transform: translate(-50%, -50%);
+}
+
+code {
+	text-align: center;
+}
+
+code i {
+	display: block;
+	font-size: 96px;
+	color: #F67;
+	text-shadow: 0 0 96px #F67;
+}
+
+code b {
+	margin: 12px 0;
+	display: block;
+	color: #888;
+}
+
+input, button {
+	background: #181818;
+	color: inherit;
+	font-size: inherit;
+	font-family: inherit;
+	border: 4px solid #181818;
+	outline: none;
+	padding: 8px;
+	border-radius: 8px;
+	font-weight: bold;
+	transition: background .2s;
+}
+
+input:focus, button:hover {
+	background: #282828;
+}
+
+button {
+	cursor: pointer;
+}
+
+
 /* Header */
 
 header {
@@ -107,10 +155,12 @@ header i {
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%) scale(.9);
-	transition: transform .2s, opacity .2s;
+	border-radius: 50%;
+	transition: transform .2s, opacity .2s, border-radius .2s;
 }
 #image.loaded {
 	opacity: 1;
+	border-radius: 0;
 	transform: translate(-50%, -50%) scale(1);
 }
 
@@ -123,9 +173,13 @@ header i {
 
 .gollery::before {
 	content: "Go";
+	color: #0FB;
+	font-weight: bold;
 }
 .gollery::after {
 	content: "llery";
+	color: #AAA;
+	font-weight: bold;
 }
 
 
@@ -136,6 +190,7 @@ header i {
 	align-items: center;
 	flex-wrap: wrap;
 	flex: 1 1 0;
+	text-align: right;
 }
 
 #items a {
@@ -155,19 +210,14 @@ header i {
 	object-fit: cover;
 }
 
-#items div {
+#items b {
+	display: block;
+	white-space: pre;
 	position: absolute;
 	bottom: 0;
-	background: #0008;
-	width: 100%;
-}
-
-#items b {
-	white-space: pre;
-}
-
-#items p {
-	white-space: pre;
+	padding: 12px;
+	width: calc(100% - 24px);
+	background: #0004;
 }
 
 
