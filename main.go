@@ -35,6 +35,7 @@ var stats Stats
 const secret string = "mysecret2137"
 
 var secretHash string
+var stopScan = false
 
 func auth(w http.ResponseWriter, r *http.Request) bool {
 	token, err := r.Cookie("gollerysecret")
@@ -121,11 +122,7 @@ func updateLibrary(fullScan bool) {
 	if stats.Scanning {
 		return
 	}
-	cached := listAllFiles("cache")
-	gallery, err := os.ReadDir("images")
-	if err != nil {
-		return
-	}
+	stopScan = false
 
 	stats = Stats{
 		Images:   0,
@@ -134,6 +131,12 @@ func updateLibrary(fullScan bool) {
 		Free:     0,
 		LastScan: 0,
 		Scanning: true,
+	}
+
+	cached := listAllFiles("cache")
+	gallery, err := os.ReadDir("images")
+	if err != nil {
+		return
 	}
 
 	var stored []string
@@ -157,6 +160,9 @@ func updateLibrary(fullScan bool) {
 
 	// Add uncached images
 	for e := 0; e < len(stored); e++ {
+		if stopScan {
+			break
+		}
 		f := strings.Replace(stored[e], "images", "cache", 1)
 		if !slices.Contains(cached, f) && fullScan {
 			ok := thumbnail(stored[e])
@@ -261,6 +267,13 @@ func scan(w http.ResponseWriter, r *http.Request) {
 	go updateLibrary(true)
 }
 
+func scanStop(w http.ResponseWriter, r *http.Request) {
+	if !auth(w, r) {
+		return
+	}
+	stopScan = true
+}
+
 func login(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	sentSecret := r.Form.Get("secret")
@@ -304,6 +317,7 @@ func main() {
 	http.HandleFunc("/settings", serveSettings)
 	http.HandleFunc("/settings/api", settingsApi)
 	http.HandleFunc("/settings/scan", scan)
+	http.HandleFunc("/settings/scanStop", scanStop)
 	http.Handle("/", http.FileServer(http.Dir("html")))
 	http.ListenAndServe(":8080", nil)
 }

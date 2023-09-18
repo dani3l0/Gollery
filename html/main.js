@@ -1,32 +1,34 @@
 document.addEventListener("DOMContentLoaded", function() {
-	// Image Viewer
-	let image = document.getElementById("image")
-	image.addEventListener("load", function() {
-		image.classList.add("loaded")
-	})
-	let viewer = document.getElementById("viewer")
-	viewer.addEventListener("click", function() {
-		viewer.classList.remove("open")
-		image.classList.remove("loaded")
-	})
-
-	// Image list
-	let imageItems = document.getElementById("images").children
-	if (!imageItems.length) {
-		document.getElementById("images").parentNode.style.display = "none"
-	}
-	for (let item of imageItems) {
-		item.addEventListener("click", function(e) {
-			e.preventDefault()
-			showImage(item)
+	try {
+		// Image Viewer
+		let image = document.getElementById("image")
+		image.addEventListener("load", function() {
+			image.classList.add("loaded")
 		})
-	}
+		let viewer = document.getElementById("viewer")
+		viewer.addEventListener("click", function() {
+			viewer.classList.remove("open")
+			image.classList.remove("loaded")
+		})
 
-	// Folder list
-	let folderItems = document.getElementById("folders").children
-	if (!folderItems.length) {
-		document.getElementById("folders").parentNode.style.display = "none"
-	}
+		// Image list
+		let imageItems = document.getElementById("images").children
+		if (!imageItems.length) {
+			document.getElementById("images").parentNode.style.display = "none"
+		}
+		for (let item of imageItems) {
+			item.addEventListener("click", function(e) {
+				e.preventDefault()
+				showImage(item)
+			})
+		}
+
+		// Folder list
+		let folderItems = document.getElementById("folders").children
+		if (!folderItems.length) {
+			document.getElementById("folders").parentNode.style.display = "none"
+		}
+	} catch(e) {}
 })
 
 function set(id, value) {
@@ -75,7 +77,11 @@ function scan() {
 	xhr.send()
 }
 
-function stopScan() {}
+function stopScan() {
+	let xhr = new XMLHttpRequest()
+	xhr.open("GET", "/settings/scanStop")
+	xhr.send()
+}
 
 function showImage(img) {
 	document.getElementById("viewer").classList.add("open")
