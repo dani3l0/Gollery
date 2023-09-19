@@ -7,6 +7,10 @@ import (
 	"encoding/json"
 	"fmt"
 	htmlTemplate "html/template"
+	"image"
+	_ "image/gif"
+	"image/jpeg"
+	_ "image/png"
 	"math/rand"
 	"net/http"
 	"os"
@@ -17,8 +21,8 @@ import (
 	"text/template"
 	"time"
 
-	"github.com/h2non/bimg"
 	"golang.org/x/exp/slices"
+	"golang.org/x/image/draw"
 )
 
 type Stats struct {
@@ -92,29 +96,29 @@ func randomFileFrom(dir string) string {
 }
 
 func thumbnail(filePath string) bool {
-	options := bimg.Options{
-		Width:         480,
-		Height:        480,
-		Crop:          true,
-		Quality:       80,
-		Interlace:     true,
-		StripMetadata: true,
-	}
-	buffer, err := bimg.Read(filePath)
+	inputFile, _ := os.Open(filePath)
+	defer inputFile.Close()
+
+	inputImage, _, err := image.Decode(inputFile)
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
+		fmt.Println(filePath, err)
 		return false
 	}
 
-	newImage, err := bimg.NewImage(buffer).Process(options)
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		return false
-	}
+	b := inputImage.Bounds()
+	w, h := float32(b.Dx()), float32(b.Dy())
+	divideBy := 1.0 / (440.0 / w)
+
+	w = w / divideBy
+	h = h / divideBy
+	thumbnail := image.NewRGBA(image.Rect(0, 0, int(w), int(h)))
+	draw.ApproxBiLinear.Scale(thumbnail, thumbnail.Bounds(), inputImage, inputImage.Bounds(), draw.Over, nil)
 
 	cache := strings.Replace(filePath, "images", "cache", 1)
 	os.MkdirAll(filepath.Dir(cache), 0750)
-	bimg.Write(cache, newImage)
+	outputFile, _ := os.Create(cache)
+	defer outputFile.Close()
+	jpeg.Encode(outputFile, thumbnail, &jpeg.Options{Quality: 60})
 	return true
 }
 
