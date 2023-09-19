@@ -131,9 +131,8 @@ func updateLibrary(fullScan bool) {
 
 	var stored []string
 	for _, e := range gallery {
-		for _, f := range listAllFiles("images/" + e.Name()) {
-			stored = append(stored, f)
-		}
+		a := listAllFiles("images/" + e.Name())
+		stored = append(stored, a...)
 	}
 
 	// Remove unused images in cache
