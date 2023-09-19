@@ -69,7 +69,7 @@ func serveSettings(w http.ResponseWriter, r *http.Request) {
 	if !auth(w, r) {
 		return
 	}
-	http.ServeFile(w, r, "html/settings.html")
+	http.ServeF(w, r, "html/settings.html")
 }
 
 func listAllFiles(dir string) []string {
@@ -328,7 +328,6 @@ func main() {
 	http.HandleFunc("/f/", serveFullImage)
 	http.HandleFunc("/t/", serveThumbnail)
 	http.HandleFunc("/g/", galleryMain)
-	http.HandleFunc("/settings", serveSettings)
 	http.HandleFunc("/settings/api", settingsApi)
 	http.HandleFunc("/settings/scan", scan)
 	http.HandleFunc("/settings/scanStop", scanStop)
