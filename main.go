@@ -65,13 +65,6 @@ func serveThumbnail(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, strings.Replace(r.URL.Path, "/t/", "cache/", 1))
 }
 
-func serveSettings(w http.ResponseWriter, r *http.Request) {
-	if !auth(w, r) {
-		return
-	}
-	http.ServeF(w, r, "html/settings.html")
-}
-
 func listAllFiles(dir string) []string {
 	var files []string
 	realPath, err := filepath.EvalSymlinks(dir)
