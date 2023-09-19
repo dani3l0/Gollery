@@ -210,6 +210,10 @@ func galleryMain(w http.ResponseWriter, r *http.Request) {
 		name := e.Name()
 		filePath := path.Clean(dir + "/" + name)
 		isFile := !e.IsDir()
+		if r.URL.Path == "/g/" {
+			// Dirty: check symlinks on root dir (entries with no extension will be considered as dirs)
+			isFile = strings.Contains(name, ".")
+		}
 		thumb := filePath
 		if !isFile {
 			thumb = randomFileFrom(filePath)
