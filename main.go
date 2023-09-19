@@ -3,10 +3,12 @@ package main
 import (
 	"bytes"
 	"crypto/sha256"
+	"embed"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	htmlTemplate "html/template"
+	"io/fs"
 	"math/rand"
 	"net/http"
 	"os"
@@ -21,6 +23,9 @@ import (
 	"github.com/disintegration/imaging"
 	"golang.org/x/exp/slices"
 )
+
+//go:embed html
+var staticFiles embed.FS
 
 type Stats struct {
 	Images   int
@@ -198,9 +203,9 @@ func galleryMain(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	entries, _ := os.ReadDir(dir)
-	itemT_, _ := os.ReadFile("html/item.html")
+	itemT_, _ := staticFiles.ReadFile("html/item.html")
 	itemT, _ := htmlTemplate.New("galleryItem").Parse(string(itemT_))
-	T_, _ := os.ReadFile("html/gallery.html")
+	T_, _ := staticFiles.ReadFile("html/gallery.html")
 	T, _ := template.New("index").Parse(string(T_))
 
 	var folders_ bytes.Buffer
@@ -327,6 +332,7 @@ func main() {
 	http.HandleFunc("/settings/api", settingsApi)
 	http.HandleFunc("/settings/scan", scan)
 	http.HandleFunc("/settings/scanStop", scanStop)
-	http.Handle("/", http.FileServer(http.Dir("html")))
+	f, _ := fs.Sub(staticFiles, "html")
+	http.Handle("/", http.FileServer(http.FS(f)))
 	http.ListenAndServe(listen, nil)
 }
