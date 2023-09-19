@@ -12,6 +12,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"syscall"
 	"text/template"
@@ -31,9 +32,8 @@ type Stats struct {
 }
 
 var stats Stats
-
-const secret string = "mysecret2137"
-
+var secret string
+var thumbSize int
 var secretHash string
 var stopScan = false
 
@@ -97,7 +97,7 @@ func thumbnail(filePath string) bool {
 		fmt.Println("failed to open image:", err)
 		return false
 	}
-	dstThumbnail := imaging.Fill(src, 400, 400, imaging.Center, imaging.NearestNeighbor)
+	dstThumbnail := imaging.Fill(src, thumbSize, thumbSize, imaging.Center, imaging.NearestNeighbor)
 	cache := strings.Replace(filePath, "images", "cache", 1)
 	os.MkdirAll(filepath.Dir(cache), 0750)
 	err = imaging.Save(dstThumbnail, cache)
@@ -291,6 +291,22 @@ func logout(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	// Config
+	listen := os.Getenv("GOLLERY_LISTEN")
+	if listen == "" {
+		listen = ":8080"
+	}
+	secret = os.Getenv("GOLLERY_SECRET")
+	if secret == "" {
+		secret = "mysecret2137"
+	}
+	thumb := os.Getenv("GOLLERY_THUMBSIZE")
+	if thumb == "" {
+		thumbSize = 400
+	} else {
+		thumbSize, _ = strconv.Atoi(thumb)
+	}
+
 	// Init library
 	os.MkdirAll("cache", 0750)
 	os.MkdirAll("images", 0750)
@@ -312,5 +328,5 @@ func main() {
 	http.HandleFunc("/settings/scan", scan)
 	http.HandleFunc("/settings/scanStop", scanStop)
 	http.Handle("/", http.FileServer(http.Dir("html")))
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(listen, nil)
 }
