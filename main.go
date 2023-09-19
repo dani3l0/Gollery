@@ -7,10 +7,6 @@ import (
 	"encoding/json"
 	"fmt"
 	htmlTemplate "html/template"
-	"image"
-	_ "image/gif"
-	"image/jpeg"
-	_ "image/png"
 	"math/rand"
 	"net/http"
 	"os"
@@ -21,8 +17,8 @@ import (
 	"text/template"
 	"time"
 
+	"github.com/disintegration/imaging"
 	"golang.org/x/exp/slices"
-	"golang.org/x/image/draw"
 )
 
 type Stats struct {
@@ -96,29 +92,19 @@ func randomFileFrom(dir string) string {
 }
 
 func thumbnail(filePath string) bool {
-	inputFile, _ := os.Open(filePath)
-	defer inputFile.Close()
-
-	inputImage, _, err := image.Decode(inputFile)
+	src, err := imaging.Open(filePath)
 	if err != nil {
-		fmt.Println(filePath, err)
+		fmt.Println("failed to open image:", err)
 		return false
 	}
-
-	b := inputImage.Bounds()
-	w, h := float32(b.Dx()), float32(b.Dy())
-	divideBy := 1.0 / (440.0 / w)
-
-	w = w / divideBy
-	h = h / divideBy
-	thumbnail := image.NewRGBA(image.Rect(0, 0, int(w), int(h)))
-	draw.ApproxBiLinear.Scale(thumbnail, thumbnail.Bounds(), inputImage, inputImage.Bounds(), draw.Over, nil)
-
+	dstThumbnail := imaging.Fill(src, 400, 400, imaging.Center, imaging.NearestNeighbor)
 	cache := strings.Replace(filePath, "images", "cache", 1)
 	os.MkdirAll(filepath.Dir(cache), 0750)
-	outputFile, _ := os.Create(cache)
-	defer outputFile.Close()
-	jpeg.Encode(outputFile, thumbnail, &jpeg.Options{Quality: 60})
+	err = imaging.Save(dstThumbnail, cache)
+	if err != nil {
+		fmt.Println("failed to save image:", err)
+		return false
+	}
 	return true
 }
 
